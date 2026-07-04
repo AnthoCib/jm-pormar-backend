@@ -34,8 +34,12 @@ public class ConfiguracionContacto {
     @Column(name = "horario_atencion", nullable = false, length = 180)
     private String horarioAtencion;
 
+    
     @Column(length = 11)
     private String ruc;
+    
+    @Column(name = "razon_social", length = 200)
+    private String razonSocial;
 
     @LastModifiedDate
     @Column(name = "fecha_actualizacion", nullable = false)

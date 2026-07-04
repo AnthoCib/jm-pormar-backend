@@ -36,6 +36,6 @@ public class ContactoService {
 
     private ContactoResponse toResponse(ConfiguracionContacto c) {
         return new ContactoResponse(c.getIdConfiguracion(), c.getWhatsapp(), c.getCorreo(), c.getDireccion(),
-                c.getHorarioAtencion(), c.getRuc(), c.getFechaActualizacion());
+                c.getHorarioAtencion(), c.getRuc(),c.getRazonSocial(), c.getFechaActualizacion());
     }
 }

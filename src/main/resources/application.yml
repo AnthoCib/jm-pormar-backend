@@ -46,6 +46,9 @@ app:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost}
   certifications:
     max-records: ${CERTIFICATIONS_MAX_RECORDS:5}
+  consulta-ruc:
+   base-url: ${RUC_API_BASE_URL:https://apiperu.dev/api}
+   token: ${RUC_API_TOKEN}
 
 springdoc:
   swagger-ui:

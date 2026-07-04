@@ -10,5 +10,6 @@ public record ContactoResponse(
         String direccion,
         String horarioAtencion,
         String ruc,
+        String razonSocial,
         OffsetDateTime fechaActualizacion
 ) {}

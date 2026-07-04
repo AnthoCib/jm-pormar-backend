@@ -1,0 +1,82 @@
+@baseUrl = http://localhost:8080
+@token = pega_aqui_el_token
+
+### Salud
+GET {{baseUrl}}/actuator/health
+
+### Login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "identificador": "admin",
+  "password": "Admin123*"
+}
+
+### Sesión actual
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{token}}
+
+### Categorías públicas
+GET {{baseUrl}}/api/public/categorias
+
+### Productos públicos
+GET {{baseUrl}}/api/public/productos?page=0&size=12&buscar=&disponibilidad=DISPONIBLE
+
+### Dashboard
+GET {{baseUrl}}/api/admin/dashboard
+Authorization: Bearer {{token}}
+
+### Crear categoría
+POST {{baseUrl}}/api/admin/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nombre": "Pinturas",
+  "descripcion": "Pinturas y complementos para obra.",
+  "activo": true
+}
+
+### Cargar imagen de producto
+POST {{baseUrl}}/api/admin/archivos/productos
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="producto.webp"
+Content-Type: image/webp
+
+< ./producto.webp
+--WebAppBoundary--
+
+### Crear producto
+POST {{baseUrl}}/api/admin/productos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "idCategoria": "10000000-0000-0000-0000-000000000002",
+  "codigoSku": "FER-001",
+  "nombre": "Taladro percutor 13 mm",
+  "disponibilidad": "DISPONIBLE",
+  "descripcionBreve": "Taladro para trabajos de obra y mantenimiento.",
+  "descripcionCompleta": "Equipo orientado a perforación y trabajos generales.",
+  "caracteristicas": "Potencia: 800 W",
+  "especificacionesTecnicas": "Voltaje: 220 V",
+  "imagenPrincipalUrl": "/api/files/productos/reemplazar-por-url-cargada.webp",
+  "activo": true
+}
+
+### Actualizar contacto
+PUT {{baseUrl}}/api/admin/contacto
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "whatsapp": "51999999999",
+  "correo": "contacto@jmpormar.com",
+  "direccion": "Callao, Perú",
+  "horarioAtencion": "Lunes a viernes de 8:00 a 18:00",
+  "ruc": ""
+}

@@ -1,0 +1,39 @@
+target/
+.idea/
+.vscode/
+*.iml
+.env
+uploads/
+.DS_Store
+
+# Maven
+target/
+*.jar
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse / Spring Tool Suite
+.project
+.classpath
+.settings/
+.factorypath
+.springBeans
+.sts4-cache/
+
+# Visual Studio Code
+.vscode/
+
+# Variables y credenciales
+.env
+application-local.yml
+application-local.properties
+
+# Logs
+logs/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db

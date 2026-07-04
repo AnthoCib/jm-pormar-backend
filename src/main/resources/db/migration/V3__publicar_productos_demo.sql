@@ -1,0 +1,20 @@
+-- Publica exclusivamente los productos de demostración incluidos en V2.
+-- La imagen se copia al directorio persistente de uploads al iniciar el backend.
+UPDATE producto
+SET imagen_principal_url = '/api/files/productos/demo-producto.png',
+    activo = TRUE,
+    fecha_actualizacion = NOW()
+WHERE id_producto IN (
+    '40000000-0000-0000-0000-000000000001',
+    '40000000-0000-0000-0000-000000000002',
+    '40000000-0000-0000-0000-000000000003',
+    '40000000-0000-0000-0000-000000000004',
+    '40000000-0000-0000-0000-000000000005',
+    '40000000-0000-0000-0000-000000000006',
+    '40000000-0000-0000-0000-000000000007',
+    '40000000-0000-0000-0000-000000000008',
+    '40000000-0000-0000-0000-000000000009',
+    '40000000-0000-0000-0000-000000000010',
+    '40000000-0000-0000-0000-000000000011',
+    '40000000-0000-0000-0000-000000000012'
+);

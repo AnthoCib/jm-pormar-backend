@@ -107,4 +107,22 @@ public class GlobalExceptionHandler {
     private ResponseEntity<ApiResponse<Object>> error(HttpStatus status, String message, Object data) {
         return ResponseEntity.status(status).body(ApiResponse.error(message, data));
     }
+    
+    @ExceptionHandler(ArchivoStorageException.class)
+    public ResponseEntity<ApiResponse<Object>>
+    archivoCloudinary(
+            ArchivoStorageException exception
+    ) {
+        log.error(
+                "Error al comunicarse con Cloudinary",
+                exception
+        );
+
+        return error(
+                HttpStatus.BAD_GATEWAY,
+                exception.getMessage(),
+                null
+        );
+    }
+    
 }

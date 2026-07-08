@@ -13,5 +13,30 @@
     "name": "app.consulta-ruc.base-url",
     "type": "java.lang.String",
     "description": "A description for 'app.consulta-ruc.base-url'"
+  },
+  {
+    "name": "cloudinary.cloud-name",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudinary.cloud-name'"
+  },
+  {
+    "name": "cloudinary.api-key",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudinary.api-key'"
+  },
+  {
+    "name": "cloudinary.api-secret",
+    "type": "java.lang.String",
+    "description": "A description for 'cloudinary.api-secret'"
+  },
+  {
+    "name": "app.consulta-ruc.token",
+    "type": "java.lang.String",
+    "description": "A description for 'app.consulta-ruc.token'"
+  },
+  {
+    "name": "app.cloudinary.cloud-name",
+    "type": "java.lang.String",
+    "description": "A description for 'app.cloudinary.cloud-name'"
   }
 ]}

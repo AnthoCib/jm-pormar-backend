@@ -1,0 +1,351 @@
+[1mdiff --git a/pom.xml b/pom.xml[m
+[1mindex 91610dc..796ec5e 100644[m
+[1m--- a/pom.xml[m
+[1m+++ b/pom.xml[m
+[36m@@ -20,8 +20,11 @@[m
+         <jjwt.version>0.12.6</jjwt.version>[m
+         <springdoc.version>2.8.6</springdoc.version>[m
+     </properties>[m
+[31m-[m
+     <dependencies>[m
+[32m+[m[32m    <dependency>[m
+[32m+[m	[32m    <groupId>org.springframework.boot</groupId>[m
+[32m+[m	[32m    <artifactId>spring-boot-starter-actuator</artifactId>[m
+[32m+[m	[32m</dependency>[m
+         <dependency>[m
+             <groupId>org.springframework.boot</groupId>[m
+             <artifactId>spring-boot-starter-web</artifactId>[m
+[36m@@ -42,6 +45,11 @@[m
+             <groupId>org.springframework.boot</groupId>[m
+             <artifactId>spring-boot-starter-actuator</artifactId>[m
+         </dependency>[m
+[32m+[m		[32m<dependency>[m
+[32m+[m	[32m    <groupId>com.cloudinary</groupId>[m
+[32m+[m	[32m    <artifactId>cloudinary-http5</artifactId>[m
+[32m+[m	[32m    <version>2.4.0</version>[m
+[32m+[m	[32m   </dependency>[m
+         <dependency>[m
+             <groupId>org.flywaydb</groupId>[m
+             <artifactId>flyway-core</artifactId>[m
+[1mdiff --git a/src/main/java/com/jmpormar/archivo/controller/ArchivoAdminController.java b/src/main/java/com/jmpormar/archivo/controller/ArchivoAdminController.java[m
+[1mindex cc40735..bf89ce3 100644[m
+[1m--- a/src/main/java/com/jmpormar/archivo/controller/ArchivoAdminController.java[m
+[1m+++ b/src/main/java/com/jmpormar/archivo/controller/ArchivoAdminController.java[m
+[36m@@ -1,30 +1,87 @@[m
+ package com.jmpormar.archivo.controller;[m
+ [m
+[32m+[m[32mimport org.springframework.http.HttpStatus;[m
+[32m+[m[32mimport org.springframework.http.MediaType;[m
+[32m+[m[32mimport org.springframework.http.ResponseEntity;[m
+[32m+[m[32mimport org.springframework.validation.annotation.Validated;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.DeleteMapping;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.PathVariable;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.PostMapping;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.RequestMapping;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.RequestParam;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.RequestPart;[m
+[32m+[m[32mimport org.springframework.web.bind.annotation.RestController;[m
+[32m+[m[32mimport org.springframework.web.multipart.MultipartFile;[m
+[32m+[m
+ import com.jmpormar.archivo.dto.ArchivoResponse;[m
+ import com.jmpormar.archivo.service.ArchivoService;[m
+ import com.jmpormar.shared.api.ApiResponse;[m
+[32m+[m
+ import jakarta.validation.constraints.Pattern;[m
+ import lombok.RequiredArgsConstructor;[m
+[31m-import org.springframework.http.HttpStatus;[m
+[31m-import org.springframework.http.ResponseEntity;[m
+[31m-import org.springframework.validation.annotation.Validated;[m
+[31m-import org.springframework.web.bind.annotation.*;[m
+[31m-import org.springframework.web.multipart.MultipartFile;[m
+ [m
+[31m-@RestController[m
+[31m-@RequestMapping("/api/admin/archivos")[m
+[31m-@RequiredArgsConstructor[m
+[31m-@Validated[m
+[31m-public class ArchivoAdminController {[m
+[31m-    private final ArchivoService service;[m
+[31m-[m
+[31m-    @PostMapping(value = "/{carpeta}", consumes = "multipart/form-data")[m
+[31m-    public ResponseEntity<ApiResponse<ArchivoResponse>> cargar([m
+[31m-            @PathVariable[m
+[31m-            @Pattern(regexp = "productos|servicios|certificaciones", message = "La carpeta de archivos no es válida")[m
+[31m-            String carpeta,[m
+[31m-            @RequestPart("file") MultipartFile file) {[m
+[31m-        return ResponseEntity.status(HttpStatus.CREATED)[m
+[31m-                .body(ApiResponse.ok("Archivo cargado", service.guardar(carpeta, file)));[m
+[31m-    }[m
+[31m-}[m
+[32m+[m	[32m@RestController[m
+[32m+[m	[32m@RequestMapping("/api/admin/archivos")[m
+[32m+[m	[32m@RequiredArgsConstructor[m
+[32m+[m	[32m@Validated[m
+[32m+[m	[32mpublic class ArchivoAdminController {[m
+[32m+[m
+[32m+[m	[32m    private final ArchivoService service;[m
+[32m+[m
+[32m+[m	[32m    @PostMapping([m
+[32m+[m	[32m            value = "/{carpeta}",[m
+[32m+[m	[32m            consumes = MediaType.MULTIPART_FORM_DATA_VALUE[m
+[32m+[m	[32m    )[m
+[32m+[m	[32m    public ResponseEntity<ApiResponse<ArchivoResponse>> cargar([m
+[32m+[m	[32m            @PathVariable[m
+[32m+[m	[32m            @Pattern([m
+[32m+[m	[32m                    regexp = "productos|servicios|certificaciones",[m
+[32m+[m	[32m                    message = "La carpeta de archivos no es válida"[m
+[32m+[m	[32m            )[m
+[32m+[m	[32m            String carpeta,[m
+[32m+[m
+[32m+[m	[32m            @RequestPart("file")[m
+[32m+[m	[32m            MultipartFile file[m
+[32m+[m	[32m    ) {[m
+[32m+[m	[32m        ArchivoResponse archivo =[m
+[32m+[m	[32m                service.guardar([m
+[32m+[m	[32m                        carpeta,[m
+[32m+[m	[32m                        file[m
+[32m+[m	[32m                );[m
+[32m+[m
+[32m+[m	[32m        return ResponseEntity[m
+[32m+[m	[32m                .status(HttpStatus.CREATED)[m
+[32m+[m	[32m                .body([m
+[32m+[m	[32m                        ApiResponse.ok([m
+[32m+[m	[32m                                "Archivo cargado",[m
+[32m+[m	[32m                                archivo[m
+[32m+[m	[32m                        )[m
+[32m+[m	[32m                );[m
+[32m+[m	[32m    }[m
+[32m+[m
+[32m+[m	[32m    @DeleteMapping("/cloudinary")[m
+[32m+[m	[32m    public ResponseEntity<ApiResponse<Object>>[m
+[32m+[m	[32m    eliminarCloudinary([m
+[32m+[m	[32m            @RequestParam[m
+[32m+[m	[32m            String publicId,[m
+[32m+[m
+[32m+[m	[32m            @RequestParam([m
+[32m+[m	[32m                    defaultValue = "image"[m
+[32m+[m	[32m            )[m
+[32m+[m	[32m            String resourceType[m
+[32m+[m	[32m    ) {[m
+[32m+[m	[32m        service.eliminarCloudinary([m
+[32m+[m	[32m                publicId,[m
+[32m+[m	[32m                resourceType[m
+[32m+[m	[32m        );[m
+[32m+[m
+[32m+[m	[32m        return ResponseEntity.ok([m
+[32m+[m	[32m                ApiResponse.ok([m
+[32m+[m	[32m                        "Archivo eliminado",[m
+[32m+[m	[32m                        null[m
+[32m+[m	[32m                )[m
+[32m+[m	[32m        );[m
+[32m+[m	[32m    }[m
+[32m+[m	[32m}[m[41m	[m
+[41m+    [m
+[41m+[m
+[1mdiff --git a/src/main/java/com/jmpormar/archivo/dto/ArchivoResponse.java b/src/main/java/com/jmpormar/archivo/dto/ArchivoResponse.java[m
+[1mindex 915c4fa..75b6ec5 100644[m
+[1m--- a/src/main/java/com/jmpormar/archivo/dto/ArchivoResponse.java[m
+[1m+++ b/src/main/java/com/jmpormar/archivo/dto/ArchivoResponse.java[m
+[36m@@ -1,9 +1,14 @@[m
+ package com.jmpormar.archivo.dto;[m
+ [m
+[32m+[m
+[32m+[m
+ public record ArchivoResponse([m
+         String nombreOriginal,[m
+         String nombreAlmacenado,[m
+         String url,[m
+[32m+[m[32m        String publicId,[m
+[32m+[m[32m        String resourceType,[m
+         String contentType,[m
+         long size[m
+[31m-) {}[m
+[32m+[m[32m) {[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/main/java/com/jmpormar/archivo/service/ArchivoService.java b/src/main/java/com/jmpormar/archivo/service/ArchivoService.java[m
+[1mindex 8b98862..9191515 100644[m
+[1m--- a/src/main/java/com/jmpormar/archivo/service/ArchivoService.java[m
+[1m+++ b/src/main/java/com/jmpormar/archivo/service/ArchivoService.java[m
+[36m@@ -1,6 +1,9 @@[m
+ package com.jmpormar.archivo.service;[m
+ [m
+[32m+[m[32mimport com.cloudinary.Cloudinary;[m
+[32m+[m[32mimport com.cloudinary.utils.ObjectUtils;[m
+ import com.jmpormar.archivo.dto.ArchivoResponse;[m
+[32m+[m[32mimport com.jmpormar.exception.ArchivoStorageException;[m
+ import com.jmpormar.exception.FileStorageException;[m
+ import jakarta.annotation.PostConstruct;[m
+ import org.springframework.beans.factory.annotation.Value;[m
+[36m@@ -13,115 +16,666 @@[m [mimport org.springframework.web.multipart.MultipartFile;[m
+ import javax.imageio.ImageIO;[m
+ import java.io.BufferedInputStream;[m
+ import java.io.IOException;[m
+[31m-import java.nio.file.*;[m
+[32m+[m[32mimport java.nio.charset.StandardCharsets;[m
+[32m+[m[32mimport java.nio.file.Files;[m
+[32m+[m[32mimport java.nio.file.Path;[m
+[32m+[m[32mimport java.nio.file.Paths;[m
+ import java.util.Locale;[m
+[32m+[m[32mimport java.util.Map;[m
+[32m+[m[32mimport java.util.Objects;[m
+ import java.util.Set;[m
+ import java.util.UUID;[m
+ [m
+ @Service[m
+ public class ArchivoService {[m
+[31m-    private static final Set<String> CARPETAS = Set.of("productos", "servicios", "certificaciones");[m
+[31m-    private static final Set<String> IMAGENES = Set.of("jpg", "jpeg", "png", "webp");[m
+[32m+[m
+[32m+[m[32m    private static final Set<String> CARPETAS =[m
+[32m+[m[32m            Set.of([m
+[32m+[m[32m                    "productos",[m
+[32m+[m[32m                    "servicios",[m
+[32m+[m[32m                    "certificaciones"[m
+[32m+[m[32m            );[m
+[32m+[m
+[32m+[m[32m    private static final Set<String> IMAGENES =[m
+[32m+[m[32m            Set.of([m
+[32m+[m[32m                    "jpg",[m
+[32m+[m[32m                    "jpeg",[m
+[32m+[m[32m                    "png",[m
+[32m+[m[32m                    "webp"[m
+[32m+[m[32m            );[m
+[32m+[m
+[32m+[m[32m    private static final long MAX_IMAGEN_BYTES =[m
+[32m+[m[32m            5L * 1024L * 1024L;[m
+[32m+[m
+[32m+[m[32m    private static final long MAX_DOCUMENTO_BYTES =[m
+[32m+[m[32m            10L * 1024L * 1024L;[m
+[32m+[m
+     private final Path root;[m
+[32m+[m[32m    private final Cloudinary cloudinary;[m
+[32m+[m[32m    private final String cloudinaryRootFolder;[m
+[32m+[m
+[32m+[m[32m    public ArchivoService([m
+[32m+[m[32m            Cloudinary cloudinary,[m
+[32m+[m
+[32m+[m[32m            @Value("${app.upload.dir:uploads}")[m
+[32m+[m[32m            String uploadDir,[m
+[32m+[m
+[32m+[m[32m            @Value("${app.cloudinary.root-folder:jm-pormar}")[m
+[32m+[m[32m            String cloudinaryRootFolder[m
+[32m+[m[32m    ) {[m
+[32m+[m[32m        this.cloudinary = cloudinary;[m
+[32m+[m
+[32m+[m[32m        this.root = Paths[m
+[32m+[m[32m                .get(uploadDir)[m
+[32m+[m[32m                .toAbsolutePath()[m
+[32m+[m[32m                .normalize();[m
+ [m
+[31m-    public ArchivoService(@Value("${app.upload.dir:uploads}") String uploadDir) {[m
+[31m-        this.root = Paths.get(uploadDir).toAbsolutePath().normalize();[m
+[32m+[m[32m        this.cloudinaryRootFolder =[m
+[32m+[m[32m                normalizarRootFolder([m
+[32m+[m[32m                        cloudinaryRootFolder[m
+[32m+[m[32m                );[m
+     }[m
+ [m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Se conserva para que continúen funcionando[m
+[32m+[m[32m     * las imágenes antiguas almacenadas localmente.[m
+[32m+[m[32m     */[m
+     @PostConstruct[m
+     void init() {[m
+         try {[m
+             Files.createDirectories(root);[m
+[31m-            for (String folder : CARPETAS) Files.createDirectories(root.resolve(folder));[m
+[31m-        } catch (IOException ex) {[m
+[31m-            throw new FileStorageException("No se pudo inicializar el directorio de archivos", ex);[m
+[31m-        }[m
+[31m-    }[m
+[31m-[m
+[31m-    public ArchivoResponse guardar(String carpeta, MultipartFile file) {[m
+[31m-        validarCarpeta(carpeta);[m
+[31m-        if (file == null || file.isEmpty()) throw new FileStorageException("Debe seleccionar un archivo");[m
+[31m-        long maxBytes = "certificaciones".equals(carpeta) ? 10L * 1024 * 1024 : 5L * 1024 * 1024;[m
+[31m-        if (file.getSize() > maxBytes) throw new FileStorageException("El archivo supera el tamaño máximo permitido");[m
+[31m-        String original = StringUtils.cleanPath(file.getOriginalFilename() == null ? "archivo" : file.getOriginalFilename());[m
+[31m-        if (original.contains("..")) throw new FileStorageException("Nombre de archivo inválido");[m
+[31m-        String extension = extension(original);[m
+[31m-        validarContenido(carpeta, extension, file);[m
+[31m-        String stored = UUID.randomUUID() + "." + extension;[m
+[31m-        Path destination = root.resolve(carpeta).resolve(stored).normalize();[m
+[31m-        if (!destination.startsWith(root.resolve(carpeta))) throw new FileStorageException("Ruta de archivo inválida");[m
+[32m+[m
+[32m+[m[32m            for (String carpeta : CARPETAS) {[m
+[32m+[m[32m                Files.createDirectories([m
+[32m+[m[32m                        root.resolve(carpeta)[m
+[32m+[m[32m                );[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m        } catch (IOException exception) {[m
+[32m+[m[32m            throw new FileStorageException([m
+[32m+[m[32m                    "No se pudo inicializar el directorio de archivos.",[m
+[32m+[m[32m                    exception[m
+[32m+[m[32m            );[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /**[m
+[32m+[m[32m     * Las nuevas cargas se almacenan en Cloudinary.[m
+[32m+[m[32m     */[m
+[32m+[m[32m    public ArchivoResponse guardar([m
+[32m+[m[32m            String carpeta,[m
+[32m+[m[32m            MultipartFile file[m
+[32m+[m[32m    ) {[m
+[32m+[m[32m        String carpetaNormalizada =[m
+[32m+[m[32m                normalizarCarpeta(carpeta);[m
+[32m+[m
+[32m+[m[32m        validarArchivo([m
+[32m+[m[32m                carpetaNormalizada,[m
+[32m+[m[32m                file[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m        String original =[m
+[32m+[m[32m                obtenerNombreOriginal(file);[m
+[32m+[m
+[32m+[m[32m        String extension =[m
+[32m+[m[32m                obtenerExtension(original);[m
+[32m+[m
+[32m+[m[32m        validarContenido([m
+[32m+[m[32m                carpetaNormalizada,[m
+[32m+[m[32m                extension,[m
+[32m+[m[32m                file[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m        boolean esPdf =[m
+[32m+[m[32m                "pdf".equals(extension);[m
+[32m+[m
+[32m+[m[32m        String resourceType =[m
+[32m+[m[32m                esPdf[m
+[32m+[m[32m                        ? "raw"[m
+[32m+[m[32m                        : "image";[m
+[32m+[m
+[32m+[m[32m        String identificador =[m
+[32m+[m[32m                UUID.randomUUID().toString();[m
+[32m+[m
+[32m+[m[32m        /*[m
+[32m+[m[32m         * Los recursos RAW necesitan conservar la[m
+[32m+[m[32m         * extensión dentro del public_id.[m
+[32m+[m[32m         */[m
+[32m+[m[32m        String publicIdSolicitado =[m
+[32m+[m[32m                esPdf[m
+[32m+[m[32m                        ? identificador + ".pdf"[m
+[32m+[m[32m                        : identificador;[m
+[32m+[m
+[32m+[m[32m        String carpetaCloudinary =[m
+[32m+[m[32m                cloudinaryRootFolder +[m
+[32m+[m[32m                "/" +[m
+[32m+[m[32m                carpetaNormalizada;[m
+[32m+[m
+         try {[m
+[31m-            Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);[m
+[31m-            String contentType = Files.probeContentType(destination);[m
+[31m-            return new ArchivoResponse(original, stored, "/api/files/" + carpeta + "/" + stored,[m
+[31m-                    contentType == null ? file.getContentType() : contentType, file.getSize());[m
+[31m-        } catch (IOException ex) {[m
+[31m-            throw new FileStorageException("No se pudo guardar el archivo", ex);[m
+[32m+[m[32m            Map<?, ?> resultado =[m
+[32m+[m[32m                    cloudinary[m
+[32m+[m[32m                            .uploader()[m
+[32m+[m[32m          

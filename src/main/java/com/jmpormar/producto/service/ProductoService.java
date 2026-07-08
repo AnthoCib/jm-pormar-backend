@@ -27,6 +27,7 @@ public class ProductoService {
     private final ProductoImagenRepository imagenRepository;
     private final CategoriaService categoriaService;
     private final ProductoMapper mapper;
+    private final ProductoQueryRepository productoQueryRepository;
 
     @Transactional(readOnly = true)
     public PageResponse<ProductoResponse> listarAdmin(String buscar, UUID categoriaId,
@@ -212,4 +213,32 @@ public class ProductoService {
     private String normalizarSku(String value) { return value.trim().toUpperCase(); }
     private String limpiar(String value) { return value.trim().replaceAll("\\s+", " "); }
     private String opcional(String value) { return StringUtils.hasText(value) ? value.trim() : null; }
+    @Transactional(readOnly = true)
+    public PageResponse<ProductoAdminResumenResponse> listarAdminResumen(
+            String buscar,
+            UUID categoriaId,
+            DisponibilidadProducto disponibilidad,
+            Boolean activo,
+            int page,
+            int size
+    ) {
+        var pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by(Sort.Direction.DESC, "fechaCreacion")
+        );
+
+        var result = productoQueryRepository.listarResumenAdmin(
+                buscar,
+                categoriaId,
+                disponibilidad,
+                activo,
+                pageable
+        );
+
+        return PageResponse.from(
+                result,
+                item -> item
+        );
+    }
 }

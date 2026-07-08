@@ -38,5 +38,10 @@
     "name": "app.cloudinary.cloud-name",
     "type": "java.lang.String",
     "description": "A description for 'app.cloudinary.cloud-name'"
+  },
+  {
+    "name": "spring.hikari.maximum-pool-size",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.hikari.maximum-pool-size'"
   }
 ]}
